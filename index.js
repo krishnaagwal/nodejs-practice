@@ -1,10 +1,24 @@
 const express = require ('express');
-const multer = require ('multer')
+require('./config')
+const Product = require('./product');
+
 const app = express();
 
+app.use(express.json())
 
-app.post("/upload",(req, resp) => {
-    resp.send("upload file")
+
+
+app.get('/search/:key', async(req,resp) => {
+    console.log(req.params.key)
+    let data = await Product.find({
+        '$or':[
+            {"name":{$regex:req.params.key}},
+            {"brand":{$regex:req.params.key}},
+            {"category":{$regex:req.params.key}}
+        ]
+    })
+    resp.send(data)
 })
+
 
 app.listen(5000)
